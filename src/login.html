@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <title>用户登录</title>
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<!--    <script  type="text/javascript" src="../js/index.js"></script>-->
+    <script>
+        let login_url = "http://localhost:8080/api/login?username=";
+        function login(){
+            let username = $("#username").val();
+            let password = $("#password").val();
+            let loginUrl = login_url+username+"&password="+password;
+            $(function () {
+                $.get(loginUrl,function (result) {
+                    if (result.status===0){
+                        let uid = result.data.uid;
+                        sessionStorage.setItem("username",username);
+                        sessionStorage.getItem("username");
+                        sessionStorage.setItem("uid",uid);
+                        alert("登录成功,正在跳转当前页面...");
+
+                        // alert(sessionStorage.getItem("uid"));
+                        location.href="index.html";
+                        // alert(sessionStorage.getItem("uid"));
+
+
+
+
+
+                    }
+                },'json')
+            });
+
+        }
+    </script>
+</head>
+<body>
+<form id="form1" class="well" method="post"
+      style="width: 30em; margin: auto; margin-top: 150px;">
+    <h3>用户登录</h3>
+    <div class=" input-group input-group-md">
+              <span class="input-group-addon" id="sizing-addon1">
+                  <i class="glyphicon glyphicon-user" ></i>
+              </span>
+        <input id="username" type="text" class="form-control" />
+
+    </div>
+    <br />
+    <div class="input-group input-group-md">
+              <span class="input-group-addon" id="sizing-addon1">
+                  <i class="glyphicon glyphicon-lock"></i>
+              </span>
+        <input type="password" id="password" class="form-control" />
+    </div>
+    <br/>
+    <button type="button" id="bn" class="btn btn-success btn-block" onclick="login()">登录</button>
+    <a class="btn btn-sm btn-white btn-block" style="text-align: right;" href="regist.html"><h6>还没有账户？前往注册</h6></a>
+</form>
+</body>
+</html>

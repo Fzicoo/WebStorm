@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的购物车</title>
+    <script src="js/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.js"></script>
+    <!--     轮播图-->
+    <script src="https://cdn.bootcss.com/Swiper/4.5.0/js/swiper.js"></script>
+    <!--      核心样式组件-->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!--    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">-->
+    <!--    轮播图-->
+    <link href="https://cdn.bootcss.com/Swiper/4.5.0/css/swiper.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.0/css/bootstrap.css" rel="stylesheet">
+    <!--    <link href="css/reset.css" rel="stylesheet">-->
+    <script>
+        let search_url = 'http://localhost:8080/api/addShop';
+        search_url += location.search;
+        $(function () {
+            $.get(search_url,function (result) {
+                if (result===1){
+                    alert("加入购物车成功!");
+                    window.history.back(-1);
+                } else {
+                    alert("加入购物车失败!请重新加入");
+                    window.history.back(-1);
+                }
+            },'json');
+        });
+
+        function cutUrl(url) {
+            //获取当前页面的url
+            // let urlinfo = window.location.href;
+            //获取url的长度
+            let len = url.length;
+            //设置参数字符串开始的位置
+            let offset = url.indexOf("?");
+            //取出参数字符串 这里会获得类似“id=1”这样的字符串
+            let newsidinfo = url.substr(offset, len);
+            //对获得的参数字符串按照“=”进行分割
+            let newsids = newsidinfo.split("=");
+            //得到参数值
+            return newsids[1];
+        }
+
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

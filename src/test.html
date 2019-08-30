@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>小米商城</title>
+    <script src="js/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.js"></script>
+    <!--     轮播图-->
+    <script src="https://cdn.bootcss.com/Swiper/4.5.0/js/swiper.js"></script>
+    <!--      核心样式组件-->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!--    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">-->
+    <!--    轮播图-->
+    <link href="https://cdn.bootcss.com/Swiper/4.5.0/css/swiper.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.0/css/bootstrap.css" rel="stylesheet">
+    <!--    <link href="css/reset.css" rel="stylesheet">-->
+
+
+    <!--    导航栏-->
+    <script>
+        let head_url = 'http://localhost:8080/api/heads';
+        $(function () {
+            //获取数据
+            $.get(head_url,function (results) {
+                if (results.status===200){
+                    //导航条动态添加
+                    let $navigation = $("#navigation");
+                    for (const navigation of results.data.navigationVoList){
+                        $navigation.append(
+                            $("<li>").append(
+                                $("<a>")
+                                    .text(navigation.navName)
+                                    .attr("style","line-height:70px")
+                            ).mouseover(function () {
+                                showNavMenu(navigation.navMenuList);
+                                $("#nav_menu").show();
+                            })
+                        )
+                    }
+                    $("#shop_contain").mouseleave(function () {
+                        $("#nav_menu").hide();
+                    })
+                }
+            },'json')
+        });
+
+        function showNavMenu(menuList) {
+            let $navMenu = $("#nav_menu");
+            $navMenu.empty();
+            let $menu_div = $("<div>");
+            $navMenu.append($menu_div);
+            for (const menu of menuList){
+                let $div = $("<div>")
+                    .attr("class" , "pull-left")
+                    .attr("style","width:200px;text-align:center");
+                $menu_div.append($div
+                    .append($("<a>")
+                        .attr("href","search.html?id="+menu.menuId)
+                        .append($("<img>")
+                            .attr("src",menu.navImg))
+                        .append($("<p>")
+                            .text(menu.menuName))
+                        .append($("<p>")
+                            .text(menu.menuPrice+"元起"))
+                    )
+                )
+
+            }
+        }
+    </script>
+    <!--    查询商品详情-->
+    <script>
+        // let shopdeta_url = window.location.href;
+        let shopdeta_url = 'http://localhost:8080/api/findShop';
+        shopdeta_url += location.search;
+        $(function () {
+            $.get(shopdeta_url,function (result) {
+                if (result.status===200){
+                    //获取左边商品图片信息
+                    let $contLeft = $("#contLeft");
+                    let $contImg = $("#contImg");
+                    for (const shop of result.data.shopImageList)
+                        $contLeft.append($contImg
+                            .append($("<img>")
+                                .attr("src",shop.shopImg)
+                                .attr("style","height:400px;width:650px"))
+
+                        );
+                    //获取右边商品信息
+                    let $contRight = $("#contRight");
+                    let $newdiv = $("<div>").attr("style","height:100px");
+                    $contRight.append($newdiv
+                        .text(result.data.shopName)
+                        .attr("style","font-size: 50px;line-height: 60px;padding-top: 30px"))
+                        .append($("<div>")
+                            .attr("style","height:60px")
+                            .text(result.data.shopMsg)
+                            .attr("style","font-size: 30px;line-height: 60px"))
+                        .append($("<div>")
+                            .attr("style","height:60px")
+                            .text(result.data.promotePrice+"元")
+                            .attr("style","font-size: 25px;line-height: 60px;color:red"))
+                        .append($("<div>")
+                            .attr("style","height:80px")
+                            .text("请选择地区:")
+                            .attr("style","font-size:30px;line-height:60px")
+                            .append($("<select>")
+                                .append($("<option>").attr("value","1").text("请选择").attr("style","padding-left:150px"))
+                                .append($("<option>").attr("value","1").text("广东"))
+                                .append($("<option>").attr("value","1").text("北京"))
+                                .append($("<option>").attr("value","1").text("上海"))
+                            )
+                        )
+                        .append($("<div>")
+                            .attr("style","height:80px")
+
+                        )
+                        .append($("<div>")
+                            .attr("class","modal-footer")
+                            .append($("<p>")
+                                .attr("class","J_modalFooterGlassValue")
+                                .text("总共:"+result.data.promotePrice+"元")
+
+                            )
+                            .append($("<a>")
+                                .attr("href","ShopCat.html?ShopId="+result.data.shopId)
+                                .attr("class","btn btn-primary J_modalFooterGlassBtn")
+                                .text("加入购物车")
+
+                            )
+
+                        )
+                }
+
+            },'json')
+
+        });
+
+        function cutUrl(url) {
+            //获取当前页面的url
+            // let urlinfo = window.location.href;
+            //获取url的长度
+            let len = url.length;
+            //设置参数字符串开始的位置
+            let offset = url.indexOf("?");
+            //取出参数字符串 这里会获得类似“id=1”这样的字符串
+            let newsidinfo = url.substr(offset, len);
+            //对获得的参数字符串按照“=”进行分割
+            let newsids = newsidinfo.split("=");
+            //得到参数值
+            return newsids[1];
+        }
+
+    </script>
+
+    <!--    <script>-->
+    <!--        let cont_url ='http://localhost:8080/api/findShop?id=5';-->
+    <!--        $(function () {-->
+    <!--            //获取数据-->
+    <!--            $.get(cont_url,function (result) {-->
+    <!--                if (result.status===200){-->
+    <!--                    //获取左边商品图片信息-->
+    <!--                    let $contLeft = $("#contLeft");-->
+    <!--                    let $contImg = $("#contImg");-->
+    <!--                    for (const shop of result.data.shopImageList)-->
+    <!--                        $contLeft.append($contImg-->
+    <!--                            .append($("<img>")-->
+    <!--                                .attr("src",shop.shopImg)-->
+    <!--                                .attr("style","height:400px;width:650px"))-->
+
+    <!--                        )-->
+    <!--                    //获取右边商品信息-->
+    <!--                    let $contRight = $("#contRight");-->
+    <!--                    let $newdiv = $("<div>").attr("style","height:100px");-->
+    <!--                    $contRight.append($newdiv-->
+    <!--                        .text(result.data.shopName)-->
+    <!--                        .attr("style","font-size: 50px;line-height: 60px;padding-top: 30px"))-->
+    <!--                        .append($("<div>")-->
+    <!--                            .attr("style","height:60px")-->
+    <!--                            .text(result.data.shopMsg)-->
+    <!--                            .attr("style","font-size: 30px;line-height: 60px"))-->
+    <!--                        .append($("<div>")-->
+    <!--                            .attr("style","height:60px")-->
+    <!--                            .text(result.data.promotePrice+"元")-->
+    <!--                            .attr("style","font-size: 25px;line-height: 60px;color:red"))-->
+    <!--                        .append($("<div>")-->
+    <!--                            .attr("style","height:80px")-->
+    <!--                            .text("请选择地区:")-->
+    <!--                            .attr("style","font-size:30px;line-height:60px")-->
+    <!--                            .append($("<select>")-->
+    <!--                                .append($("<option>").attr("value","1").text("请选择").attr("style","padding-left:150px"))-->
+    <!--                                .append($("<option>").attr("value","1").text("广东"))-->
+    <!--                                .append($("<option>").attr("value","1").text("北京"))-->
+    <!--                                .append($("<option>").attr("value","1").text("上海"))-->
+    <!--                            )-->
+    <!--                        )-->
+    <!--                        .append($("<div>")-->
+    <!--                            .attr("style","height:80px")-->
+
+    <!--                        )-->
+    <!--                        .append($("<div>")-->
+    <!--                            .attr("class","modal-footer")-->
+    <!--                            .append($("<p>")-->
+    <!--                                .attr("class","J_modalFooterGlassValue")-->
+    <!--                                .text("总共:"+result.data.promotePrice+"元")-->
+
+    <!--                            )-->
+    <!--                            .append($("<a>")-->
+    <!--                                .attr("href","http://localhost:8080/api/v2/cate?id="+result.data.shopId)-->
+    <!--                                .attr("class","btn btn-primary J_modalFooterGlassBtn")-->
+    <!--                                .text("加入购物车")-->
+
+    <!--                            )-->
+
+    <!--                        )-->
+    <!--                } -->
+    <!--                -->
+    <!--            },'json')-->
+    <!--        })-->
+
+    <!--    </script>-->
+
+    <script>
+        // let search_url = 'http://localhost:8080/api/search?keyword=';
+        //跳转搜索界面
+        // function search(){
+        //     let kw = $("#inputval").val();
+        //     alert(kw);
+        //     // search_url += kw;
+        //     location.href="http://localhost:8080/api/search?keyword="+kw;
+        // }
+        $(function () {
+            $("#search_btn").click(function () {
+                // let url = "search.html?keyword=" +  $("#inputval").val();
+                location.href="search.html?keyword=" +  $("#inputval").val();
+                return false
+            })
+        })
+
+    </script>
+
+    <style>
+        .top {
+            height: 50px;
+            background-color: #333333;
+        }
+        .left>a {
+            padding-left: 50px;
+            line-height: 50px;
+            color: #b0b0b0;
+        }
+        .right>a {
+            float: right;
+            line-height: 50px;
+            padding-right: 50px;
+            color: #b0b0b0;
+        }
+        #car {
+            float: right;
+        }
+        #cart {
+            line-height: 50px;
+            padding-right: 50px;
+            color: #b0b0b0;
+        }
+        /*#nav_menu {*/
+        /*    position: relative;*/
+        /*    left: 30px;*/
+        /*    top: 0px;*/
+        /*}*/
+        /*#contTop {*/
+        /*    position: absolute;*/
+        /*    top: 150px;*/
+        /*}*/
+        #shopNameCss {
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="top">
+    <top class="left">
+        <a href="#">小米商城</a>
+        <a href="#">MIUI</a>
+        <a href="#">云服务</a>
+    </top>
+    <top class="right">
+        <a href="login.html">登录</a>
+        <a href="regist.html">注册</a>
+        <a href="#">消息通知</a>
+        <a>
+            <li id="car" class="dropdown">
+                <a id="cart" href="#" class="glyphicon glyphicon-shopping-cart dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">购物车<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">已添加商品</a></li>
+                    <li><a href="#">我的购物车</a></li>
+                </ul>
+            </li>
+        </a>
+    </top>
+
+</div>
+<div class="container-fluid">
+    <div class="head">
+        <div id="shop_contain" class="clearfix">
+            <div style="height: 100px">
+                <nav class="nav">
+                    <ul class="nav navbar-nav col-lg-2" style="height: 100px">
+                        <li style="line-height: 100px"><img src="images/1.png"></li>
+                    </ul>
+                    <ul id="navigation" class="nav navbar-nav col-lg-7" >
+
+                    </ul>
+                    <div class="nav navbar-nav col-lg-3" >
+                        <form  id="search_from" action="#" class="navbar-form navbar-left col-lg-6" style="line-height: 85px">
+                            <div class="form-group">
+                                <input id="inputval" type="text" class="form-control" placeholder="小米9 小米9SE">
+                            </div>
+                            <button id="search_btn" type="button" class="btn btn-default" onclick="search()">搜索</button>
+                        </form>
+                    </div>
+
+                </nav>
+            </div>
+            <div id="nav_menu" class="clearfix" style="display:none">
+                <ul style="line-height: 50px;padding-top: 100px">
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="content"  >
+        <div id="contTop" >
+            <nav id="contLeft" class="col-lg-6" style="height: 400px">
+                <div id="contImg">
+
+                </div>
+            </nav>
+            <nav id="contRight" class="col-lg-6" style="height: 400px">
+
+            </nav>
+
+        </div>
+
+    </div>
+    <div class="footer" style="padding-left: 50px">
+        <div style="line-height:80px;font-size: 25px;">价格说明</div>
+        <div><img src="images/2.png"></div>
+        <div><img src="images/3.png" width="1225px"></div>
+    </div>
+</div>
+
+</body>
+</html>
